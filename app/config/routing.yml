@@ -1,0 +1,24 @@
+line_order:
+    resource: "@LineOrderBundle/Controller/"
+    type:     annotation
+    prefix:   /line
+
+order:
+    resource: "@OrderBundle/Controller/"
+    type:     annotation
+    prefix:   /order
+
+client:
+    resource: "@ClientBundle/Controller/"
+    type:     annotation
+    prefix:   /client
+
+category:
+    resource: "@CategoryBundle/Controller/"
+    type:     annotation
+    prefix:   /category
+
+article:
+    resource: "@ArticleBundle/Controller/"
+    type:     annotation
+    prefix:   /article

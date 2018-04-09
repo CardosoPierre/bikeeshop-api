@@ -1,0 +1,4 @@
+services:
+#    line_order.example:
+#        class: LineOrderBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]
