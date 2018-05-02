@@ -93,6 +93,8 @@ class OrderController extends Controller
         $order->setDate($request->request->get('date'));
         $order->setClient($request->request->get('client'));
         $em->merge($order);
+        $em->flush();
+
 
         return new JsonResponse(['message'=>'Order modified'], Response::HTTP_OK);
     }

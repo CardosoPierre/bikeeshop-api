@@ -96,6 +96,8 @@ class LineOrderController extends Controller
         $line->setClient($request->request->get('client'));
         $line->setQuantity($request->request->get('quantity'));
         $em->merge($line);
+        $em->flush();
+
 
         return new JsonResponse(['message'=>'Line modified'], Response::HTTP_OK);
     }

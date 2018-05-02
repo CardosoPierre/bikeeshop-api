@@ -99,6 +99,8 @@ class CategoryController extends Controller
         $category->setDescription($request->request->get('description'));
         $category->setVisual($request->request->get('visual'));
         $em->merge($category);
+        $em->flush();
+
 
         return new JsonResponse(['message'=>'Category modified'], Response::HTTP_OK);
     }

@@ -100,6 +100,8 @@ class ArticleController extends Controller
         $article->setStock($request->request->get('stock'));
         $article->setCategory($request->request->get('category'));
         $em->merge($article);
+        $em->flush();
+
 
         return new JsonResponse(['message'=>'Article modified'], Response::HTTP_OK);
     }
