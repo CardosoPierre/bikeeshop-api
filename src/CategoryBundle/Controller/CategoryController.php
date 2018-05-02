@@ -3,55 +3,104 @@
 namespace CategoryBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use CategoryBundle\Entity\Category;
+use FOS\RestBundle\Controller\Annotations as Rest;
+
 
 class CategoryController extends Controller
 {
     /**
-     * @Route("/")
+     * @Rest\Get("/")
+     * @Rest\View()
      */
-    public function getAction()
+    public function getCategorysAction()
     {
         $em = $this->getDoctrine()->getManager();
 
-        $article = $em->getRepository('CategoryBundle:Category')->findAll();
-        $data =  $this->get('serializer')->serialize($article, 'json');
-        $response = new Response($data);
+        $categorys = $em->getRepository('CategoryBundle:Category')->findAll();
 
-        $response->headers->set('Content-Type', 'application/json');
 
-        return $response;
+        return $categorys;
     }
 
     /**
-     * @Route("/{id}")
+     * @Rest\Get("/{id}")
+     * @Rest\View()
      */
-    public function getOneAction($id)
+    public function getOneCategoryAction($id)
     {
         $em = $this->getDoctrine()->getManager();
 
-        $article = $em->getRepository('CategoryBundle:Category')->find($id);
-        $data =  $this->get('serializer')->serialize($article, 'json');
-        $response = new Response($data);
+        $category = $em->getRepository('CategoryBundle:Category')->find($id);
+        if(empty($category)){
+            return new JsonResponse(['message'=> 'Category not found'], Response::HTTP_NOT_FOUND);
+        }
 
-        $response->headers->set('Content-Type', 'application/json');
 
-        return $response;
+        return $category;
     }
 
     /**
-     * @Route("/delete/{id}")
+     * @Rest\Post("/add")
+     * @Rest\View()
      */
-    public function deleteAction($id)
+    public function postCategoryAction(Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
 
-        $article = $em->getRepository('CategoryBundle:Category')->find($id);
-        $em->remove($article);
+        $category = new Category();
+
+        $category->setName($request->request->get('name'));
+        $category->setDescription($request->request->get('description'));
+        $category->setVisual($request->request->get('visual'));
+
+
+        $em = $this->getDoctrine()->getManager();
+        $em ->persist($category);
         $em->flush();
 
-        return $this->render('default/delete.html.twig');
+
+        return new JsonResponse(['message'=> "Category added"],Response::HTTP_CREATED);
+    }
+
+
+    /**
+     * @Rest\Delete("/delete/{id}")
+     */
+    public function deleteCategoryAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $category = $em->getRepository('CategoryBundle:Category')->find($id);
+        if(empty($category)){
+            return new JsonResponse(['message'=> "This category doesn't exist"], Response::HTTP_BAD_REQUEST);
+        }
+        $em->remove($category);
+        $em->flush();
+
+        return new JsonResponse(['message'=> 'Category deleted'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Put("/put/{id}")
+     */
+    public function putCategoryAction(Request $request,$id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $category = $em->getRepository('CategoryBundle:Category')->find($id);
+        if(empty($client)){
+            return new JsonResponse(['message'=> "Category does not exist"],Response::HTTP_NOT_FOUND);
+        }
+
+        $category->setName($request->request->get('name'));
+        $category->setDescription($request->request->get('description'));
+        $category->setVisual($request->request->get('visual'));
+        $em->merge($category);
+
+        return new JsonResponse(['message'=>'Category modified'], Response::HTTP_OK);
     }
 
 }

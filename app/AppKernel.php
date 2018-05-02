@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new ClientBundle\ClientBundle(),
             new OrderBundle\OrderBundle(),
             new LineOrderBundle\LineOrderBundle(),
+            new FOS\RestBundle\FOSRestBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

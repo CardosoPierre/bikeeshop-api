@@ -70,5 +70,17 @@ class Orders
     {
         return $this->date;
     }
+
+    public function setClient($client)
+    {
+        $this->client=$client;
+
+        return $this;
+    }
+
+    public function getClient()
+    {
+        return $this->client;
+    }
 }
 

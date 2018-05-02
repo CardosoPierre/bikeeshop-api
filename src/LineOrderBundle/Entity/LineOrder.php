@@ -78,5 +78,30 @@ class LineOrder
     {
         return $this->quantity;
     }
+
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    public function setClient($client)
+    {
+         $this->client = $client;
+
+         return $this;
+
+    }
+
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
+    public function setOrder($order)
+    {
+        $this->order=$order;
+
+        return $this;
+    }
 }
 

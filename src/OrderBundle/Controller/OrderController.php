@@ -3,54 +3,98 @@
 namespace OrderBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use OrderBundle\Entity\Orders;
+use FOS\RestBundle\Controller\Annotations as Rest;
 
 class OrderController extends Controller
 {
     /**
-     * @Route("/")
+     * @Rest\Get("/")
+     * @Rest\View()
      */
-    public function getAction()
+    public function getOrdersAction()
     {
         $em = $this->getDoctrine()->getManager();
 
-        $article = $em->getRepository('OrderBundle:Orders')->findAll();
-        $data =  $this->get('serializer')->serialize($article, 'json');
-        $response = new Response($data);
+        $order = $em->getRepository('OrderBundle:Orders')->findAll();
 
-        $response->headers->set('Content-Type', 'application/json');
 
-        return $response;
+        return $order;
     }
 
     /**
-     * @Route("/{id}")
+     * @Rest\Post("/add")
+     * @Rest\View()
+     *
      */
-    public function getOneAction($id)
+    public function postOrderAction(Request $request)
     {
+        $order = new Orders();
+
+        $order->setDate($request->request->get('date'));
+        $order->setClient($request->request->get('client'));
+
         $em = $this->getDoctrine()->getManager();
-
-        $article = $em->getRepository('OrderBundle:Orders')->find($id);
-        $data =  $this->get('serializer')->serialize($article, 'json');
-        $response = new Response($data);
-
-        $response->headers->set('Content-Type', 'application/json');
-
-        return $response;
-    }
-    /**
-     * @Route("/delete/{id}")
-     */
-    public function deleteAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $article = $em->getRepository('OrderBundle:Orders')->find($id);
-        $em->remove($article);
+        $em->persist($order);
         $em->flush();
 
-        return $this->render('default/delete.html.twig');
+        return new JsonResponse(['message'=> 'Order added'], Response::HTTP_CREATED);
+
+    }
+
+    /**
+     * @Rest\Get("/{id}")
+     * @Rest\View()
+     */
+    public function getOneOrderAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $order = $em->getRepository('OrderBundle:Orders')->find($id);
+        if(empty($order)){
+            return new JsonResponse(['message'=> 'order not found'], Response::HTTP_NOT_FOUND);
+        }
+
+
+        return $order;
+    }
+    /**
+     * @Rest\Delete("/delete/{id}")
+     */
+    public function deleteOrderAction($id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $order = $em->getRepository('OrderBundle:Orders')->find($id);
+        if(empty($order)){
+            return new JsonResponse(['message'=> "Order doesn't exist"],Response::HTTP_BAD_REQUEST);
+        }
+        $em->remove($order);
+        $em->flush();
+
+        return new JsonResponse(['message'=> 'Order deleted'], Response::HTTP_OK);
+    }
+
+    /**
+     * @Rest\Put("/put/{id}")
+     */
+    public function putOrderAction(Request $request,$id)
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $order = $em->getRepository('OrderBundle:Orders')->find($id);
+        if(empty($order)){
+            return new JsonResponse(['message'=> "Order does not exist"],Response::HTTP_NOT_FOUND);
+        }
+
+        $order->setDate($request->request->get('date'));
+        $order->setClient($request->request->get('client'));
+        $em->merge($order);
+
+        return new JsonResponse(['message'=>'Order modified'], Response::HTTP_OK);
     }
 
 

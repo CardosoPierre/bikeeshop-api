@@ -194,5 +194,17 @@ class Article
     {
         return $this->stock;
     }
+
+    public function setCategory($category)
+    {
+        $this->category=$category;
+
+        return $this;
+    }
+
+    public function getCategory()
+    {
+        return $this->category;
+    }
 }
 
