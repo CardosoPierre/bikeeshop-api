@@ -19,27 +19,23 @@ class LineOrderController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
-        $line = $em->getRepository('LineOrderBundle:LineOrder')->findAll();
+        $lineOrders = $em->getRepository('LineOrderBundle:LineOrder')->findAll();
 
 
-        return $line;
+        return $lineOrders;
     }
 
     /**
      * @Rest\Get("/{id}")
      * @Rest\View()
      */
-    public function getOneLineAction($id)
+    public function getOneLineAction(LineOrder $lineOrder = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $line= $em->getRepository('LineOrderBundle:LineOrder')->find($id);
-        if(empty($line)){
+        if ($lineOrder == null){
             return new JsonResponse(['message'=> 'line not found'], Response::HTTP_NOT_FOUND);
         }
 
-
-        return $line;
+        return $lineOrder;
     }
 
     /**
@@ -47,16 +43,24 @@ class LineOrderController extends Controller
      */
     public function postLineAction(Request $request)
     {
-        $line = new LineOrder();
-
-        $line->setOrder($request->request->get('order'));
-        $line->setClient($request->request->get('client'));
-        $line->setQuantity($request->request->get('quantity'));
+        $lineOrder = new LineOrder();
 
         $em = $this->getDoctrine()->getManager();
-        $em ->persist($line);
-        $em->flush();
 
+        $order = $em
+            ->getRepository("OrderBundle:Orders")
+            ->find($request->request->get('order'));
+        $lineOrder->setOrder($order);
+
+        $article = $em
+            ->getRepository("ArticleBundle:Article")
+            ->find($request->request->get('article'));
+        $lineOrder->setArticle($article);
+
+        $lineOrder->setQuantity($request->request->get('quantity'));
+
+        $em ->persist($lineOrder);
+        $em->flush();
 
         return new JsonResponse(['message'=>'Line added'], Response::HTTP_CREATED);
     }
@@ -65,16 +69,14 @@ class LineOrderController extends Controller
     /**
      * @Rest\Delete("/delete/{id}")
      */
-    public function deleteLineAction($id)
+    public function deleteLineAction(LineOrder $lineOrder = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $line = $em->getRepository('LineOrderBundle:LineOrder')->find($id);
-
-        if(empty($line)){
+        if($lineOrder == null){
             return new JsonResponse(['message' => "This line doesn't exist"], Response::HTTP_BAD_REQUEST);
         }
-        $em->remove($line);
+
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($lineOrder);
         $em->flush();
 
         return new JsonResponse(['message'=> "Line deleted"], Response::HTTP_OK);
@@ -83,21 +85,25 @@ class LineOrderController extends Controller
     /**
      * @Rest\Put("/put/{id}")
      */
-    public function putLineAction(Request $request,$id)
+    public function putLineAction(Request $request,LineOrder $lineOrder = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $line = $em->getRepository('LineOrderBundle:LineOrder')->find($id);
-        if(empty($line)){
+        if(empty($lineOrder)){
             return new JsonResponse(['message'=> "Line does not exist"],Response::HTTP_NOT_FOUND);
         }
 
-        $line->setOrder($request->request->get('order'));
-        $line->setClient($request->request->get('client'));
-        $line->setQuantity($request->request->get('quantity'));
-        $em->merge($line);
-        $em->flush();
+        $em = $this->getDoctrine()->getManager();
+        $order = $em
+            ->getRepository("OrderBundle:Orders")
+            ->find($request->request->get('order'));
+        $lineOrder->setOrder($order);
 
+        $article = $em
+            ->getRepository("ArticleBundle:Article")
+            ->find($request->request->get('article'));
+        $lineOrder->setArticle($article);
+        $lineOrder->setQuantity($request->request->get('quantity'));
+        $em->merge($lineOrder);
+        $em->flush();
 
         return new JsonResponse(['message'=>'Line modified'], Response::HTTP_OK);
     }

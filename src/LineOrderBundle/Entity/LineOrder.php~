@@ -17,13 +17,13 @@ class LineOrder
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      */
     private $id;
 
     /**
      * @var order
      *
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity="OrderBundle\Entity\Orders")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -90,42 +90,5 @@ class LineOrder
 
         return $this;
     }
-
-    /**
-     * Set id.
-     *
-     * @param int $id
-     *
-     * @return LineOrder
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
-    }
-
-    /**
-     * Set article.
-     *
-     * @param \ArticleBundle\Entity\Article $article
-     *
-     * @return LineOrder
-     */
-    public function setArticle(\ArticleBundle\Entity\Article $article)
-    {
-        $this->article = $article;
-
-        return $this;
-    }
-
-    /**
-     * Get article.
-     *
-     * @return \ArticleBundle\Entity\Article
-     */
-    public function getArticle()
-    {
-        return $this->article;
-    }
 }
+

@@ -29,12 +29,9 @@ class ArticleController extends Controller
      * @Rest\Get("/{id}")
      * @Rest\View()
      */
-    public function getOneArticleAction($id)
+    public function getOneArticleAction(Article $article = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $article = $em->getRepository('ArticleBundle:Article')->find($id);
-        if (empty($article)) {
+        if ($article == null) {
             return new JsonResponse(['message' => 'Article not found'], Response::HTTP_NOT_FOUND);
         }
 
@@ -55,9 +52,12 @@ class ArticleController extends Controller
         $article->setVisual($request->request->get('visual'));
         $article->setPrice($request->request->get('price'));
         $article->setStock($request->request->get('stock'));
-        $article->setCategory($request->request->get('category'));
-
         $em = $this->getDoctrine()->getManager();
+        $category = $em
+            ->getRepository("CategoryBundle:Category")
+            ->find($request->request->get('category'));
+        $article->setCategory($category);
+
         $em->persist($article);
         $em->flush();
 
@@ -68,14 +68,15 @@ class ArticleController extends Controller
     /**
      * @Rest\Delete("/delete/{id}")
      */
-    public function deleteArticleAction($id)
+    public function deleteArticleAction(Article $article = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $article = $em->getRepository('ArticleBundle:Article')->find($id);
-        if (empty($article)) {
+        if ($article == null) {
             return new JsonResponse(['message' => "This article doesn't exist"], Response::HTTP_BAD_REQUEST);
         }
+        $em = $this
+            ->getDoctrine()
+            ->getManager();
+
         $em->remove($article);
         $em->flush();
 
@@ -85,20 +86,24 @@ class ArticleController extends Controller
     /**
      * @Rest\Put("/put/{id}")
      */
-    public function putArticleAction(Request $request,$id)
+    public function putArticleAction(Article $article = null, Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $article = $em->getRepository('ArticleBundle:Article')->find($id);
-        if(empty($article)){
+        if($article == null){
             return new JsonResponse(['message'=> "Article does not exist"],Response::HTTP_NOT_FOUND);
         }
+
+        $em = $this
+            ->getDoctrine()
+            ->getManager();
         $article->setName($request->request->get('name'));
         $article->setDescription($request->request->get('description'));
         $article->setVisual($request->request->get('visual'));
         $article->setPrice($request->request->get('price'));
         $article->setStock($request->request->get('stock'));
-        $article->setCategory($request->request->get('category'));
+        $category = $em
+            ->getRepository("CategoryBundle:Category")
+            ->find($request->request->get('category'));
+        $article->setCategory($category);
         $em->merge($article);
         $em->flush();
 

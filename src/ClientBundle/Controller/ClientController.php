@@ -28,16 +28,12 @@ class ClientController extends Controller
      * @Rest\Get("/get/{id}")
      * @Rest\View()
      */
-    public function getOneClientAction($id)
+    public function getOneClientAction(Client $client = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $client = $em->getRepository('ClientBundle:Client')->find($id);
-        if(empty($client))
+        if($client == null)
         {
             return new JsonResponse(['Message'=> 'Client not found'],Response::HTTP_NOT_FOUND);
         }
-
 
         return $client;
     }
@@ -69,15 +65,13 @@ class ClientController extends Controller
     /**
      * @Rest\Delete("/delete/{id}")
      */
-    public function deleteClientAction($id)
+    public function deleteClientAction(Client $client = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-
-        $client = $em->getRepository('ClientBundle:Client')->find($id);
-        if(empty($client)){
+        if($client == null){
             return new JsonResponse(['message'=> "This client doesn't exist"], Response::HTTP_BAD_REQUEST);
         }
+
+        $em = $this->getDoctrine()->getManager();
         $em->remove($client);
         $em->flush();
 
@@ -87,14 +81,13 @@ class ClientController extends Controller
     /**
      * @Rest\Put("/put/{id}")
      */
-    public function putClientAction(Request $request,$id)
+    public function putClientAction(Request $request,Client $client = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $client = $em->getRepository('ClientBundle:Client')->find($id);
-        if(empty($client)){
+        if($client == null){
             return new JsonResponse(['message'=> "Client does not exist"],Response::HTTP_NOT_FOUND);
         }
+
+        $em = $this->getDoctrine()->getManager();
         $client->setLastName($request->get('lastName'));
         $client->setFirstName($request->get('firstName'));
         $client->setAddress($request->get('address'));
@@ -106,11 +99,5 @@ class ClientController extends Controller
         $em->flush();
 
             return new JsonResponse(['message'=>'Client modified'], Response::HTTP_OK);
-
-
-
-
     }
-
-
 }

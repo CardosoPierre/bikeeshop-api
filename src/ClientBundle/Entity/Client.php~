@@ -3,15 +3,12 @@
 namespace ClientBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use JMS\Serializer\Annotation as Serializer;
 
 /**
  * Client
  *
  * @ORM\Table(name="client")
  * @ORM\Entity(repositoryClass="ClientBundle\Repository\ClientRepository")
- *
- * @Serializer\ExclusionPolicy("ALL")
  */
 class Client
 {
@@ -21,8 +18,6 @@ class Client
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     *
-     * @Serializer\Expose
      */
     private $id;
 
@@ -30,8 +25,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="lastName", type="string", length=255)
-     *
-     * @Serializer\Expose
      */
     private $lastName;
 
@@ -39,8 +32,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="firstName", type="string", length=255)
-     *
-     * @Serializer\Expose
      */
     private $firstName;
 
@@ -48,8 +39,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="address", type="string", length=500)
-     *
-     * @Serializer\Expose
      */
     private $address;
 
@@ -57,8 +46,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="zipCode", type="string", length=10)
-     *
-     * @Serializer\Expose
      */
     private $zipCode;
 
@@ -66,8 +53,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="city", type="string", length=255)
-     *
-     * @Serializer\Expose
      */
     private $city;
 
@@ -75,8 +60,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255)
-     *
-     * @Serializer\Expose
      */
     private $email;
 
@@ -84,8 +67,6 @@ class Client
      * @var string
      *
      * @ORM\Column(name="phone", type="string", length=255)
-     *
-     * @Serializer\Expose
      */
     private $phone;
 
@@ -272,47 +253,5 @@ class Client
     {
         return $this->phone;
     }
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->orders = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
-    /**
-     * Add order.
-     *
-     * @param \OrderBundle\Entity\Orders $order
-     *
-     * @return Client
-     */
-    public function addOrder(\OrderBundle\Entity\Orders $order)
-    {
-        $this->orders[] = $order;
-
-        return $this;
-    }
-
-    /**
-     * Remove order.
-     *
-     * @param \OrderBundle\Entity\Orders $order
-     *
-     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
-     */
-    public function removeOrder(\OrderBundle\Entity\Orders $order)
-    {
-        return $this->orders->removeElement($order);
-    }
-
-    /**
-     * Get orders.
-     *
-     * @return \Doctrine\Common\Collections\Collection
-     */
-    public function getOrders()
-    {
-        return $this->orders;
-    }
 }
+

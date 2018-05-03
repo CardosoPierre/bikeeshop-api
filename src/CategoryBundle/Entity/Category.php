@@ -42,6 +42,11 @@ class Category
      */
     private $visual;
 
+    /**
+     * @ORM\OneToMany(targetEntity="ArticleBundle\Entity\Article", mappedBy="category")
+     */
+    private $articles;
+
 
     /**
      * Get id
@@ -124,5 +129,47 @@ class Category
     {
         return $this->visual;
     }
-}
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->articles = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
+    /**
+     * Add article.
+     *
+     * @param \ArticleBundle\Entity\Article $article
+     *
+     * @return Category
+     */
+    public function addArticle(\ArticleBundle\Entity\Article $article)
+    {
+        $this->articles[] = $article;
+
+        return $this;
+    }
+
+    /**
+     * Remove article.
+     *
+     * @param \ArticleBundle\Entity\Article $article
+     *
+     * @return boolean TRUE if this collection contained the specified element, FALSE otherwise.
+     */
+    public function removeArticle(\ArticleBundle\Entity\Article $article)
+    {
+        return $this->articles->removeElement($article);
+    }
+
+    /**
+     * Get articles.
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getArticles()
+    {
+        return $this->articles;
+    }
+}

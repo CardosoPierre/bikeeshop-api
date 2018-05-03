@@ -30,15 +30,11 @@ class CategoryController extends Controller
      * @Rest\Get("/{id}")
      * @Rest\View()
      */
-    public function getOneCategoryAction($id)
+    public function getOneCategoryAction(Category $category = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $category = $em->getRepository('CategoryBundle:Category')->find($id);
-        if(empty($category)){
+        if ($category == null){
             return new JsonResponse(['message'=> 'Category not found'], Response::HTTP_NOT_FOUND);
         }
-
 
         return $category;
     }
@@ -69,14 +65,13 @@ class CategoryController extends Controller
     /**
      * @Rest\Delete("/delete/{id}")
      */
-    public function deleteCategoryAction($id)
+    public function deleteCategoryAction(Category $category = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $category = $em->getRepository('CategoryBundle:Category')->find($id);
-        if(empty($category)){
+        if ($category == null){
             return new JsonResponse(['message'=> "This category doesn't exist"], Response::HTTP_BAD_REQUEST);
         }
+
+        $em = $this->getDoctrine()->getManager();
         $em->remove($category);
         $em->flush();
 
@@ -86,15 +81,13 @@ class CategoryController extends Controller
     /**
      * @Rest\Put("/put/{id}")
      */
-    public function putCategoryAction(Request $request,$id)
+    public function putCategoryAction(Category $category = null, Request $request)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $category = $em->getRepository('CategoryBundle:Category')->find($id);
-        if(empty($client)){
+        if($category == null){
             return new JsonResponse(['message'=> "Category does not exist"],Response::HTTP_NOT_FOUND);
         }
 
+        $em = $this->getDoctrine()->getManager();
         $category->setName($request->request->get('name'));
         $category->setDescription($request->request->get('description'));
         $category->setVisual($request->request->get('visual'));

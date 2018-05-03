@@ -26,6 +26,32 @@ class OrderController extends Controller
     }
 
     /**
+     * @Rest\Get("/{id}")
+     * @Rest\View()
+     */
+    public function getOneOrderAction(Orders $order = null)
+    {
+        if ($order == null){
+            return new JsonResponse(['message'=> 'order not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $order;
+    }
+
+    /**
+     * @Rest\Get("/{id}/lines")
+     * @Rest\View()
+     */
+    public function getLineOrderAction(Orders $order = null)
+    {
+        if ($order == null){
+            return new JsonResponse(['message'=> 'order not found'], Response::HTTP_NOT_FOUND);
+        }
+
+        return $order->getLineOrders();
+    }
+
+    /**
      * @Rest\Post("/add")
      * @Rest\View()
      *
@@ -34,10 +60,14 @@ class OrderController extends Controller
     {
         $order = new Orders();
 
-        $order->setDate($request->request->get('date'));
-        $order->setClient($request->request->get('client'));
-
         $em = $this->getDoctrine()->getManager();
+
+        $client = $em
+            ->getRepository("ClientBundle:Client")
+            ->find($request->request->get('client'));
+
+        $order->setClient($client);
+
         $em->persist($order);
         $em->flush();
 
@@ -46,32 +76,15 @@ class OrderController extends Controller
     }
 
     /**
-     * @Rest\Get("/{id}")
-     * @Rest\View()
-     */
-    public function getOneOrderAction($id)
-    {
-        $em = $this->getDoctrine()->getManager();
-
-        $order = $em->getRepository('OrderBundle:Orders')->find($id);
-        if(empty($order)){
-            return new JsonResponse(['message'=> 'order not found'], Response::HTTP_NOT_FOUND);
-        }
-
-
-        return $order;
-    }
-    /**
      * @Rest\Delete("/delete/{id}")
      */
-    public function deleteOrderAction($id)
+    public function deleteOrderAction(Orders $order = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $order = $em->getRepository('OrderBundle:Orders')->find($id);
-        if(empty($order)){
+        if($order == null){
             return new JsonResponse(['message'=> "Order doesn't exist"],Response::HTTP_BAD_REQUEST);
         }
+
+        $em = $this->getDoctrine()->getManager();
         $em->remove($order);
         $em->flush();
 
@@ -81,16 +94,13 @@ class OrderController extends Controller
     /**
      * @Rest\Put("/put/{id}")
      */
-    public function putOrderAction(Request $request,$id)
+    public function putOrderAction(Request $request,Orders $order = null)
     {
-        $em = $this->getDoctrine()->getManager();
-
-        $order = $em->getRepository('OrderBundle:Orders')->find($id);
-        if(empty($order)){
+        if($order == null){
             return new JsonResponse(['message'=> "Order does not exist"],Response::HTTP_NOT_FOUND);
         }
 
-        $order->setDate($request->request->get('date'));
+        $em = $this->getDoctrine()->getManager();
         $order->setClient($request->request->get('client'));
         $em->merge($order);
         $em->flush();

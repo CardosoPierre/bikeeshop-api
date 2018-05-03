@@ -1,16 +1,16 @@
 <?php
 
-namespace ArticleBundle\Entity;
+namespace CategoryBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Article
+ * Category
  *
- * @ORM\Table(name="article")
- * @ORM\Entity(repositoryClass="ArticleBundle\Repository\ArticleRepository")
+ * @ORM\Table(name="category")
+ * @ORM\Entity(repositoryClass="CategoryBundle\Repository\CategoryRepository")
  */
-class Article
+class Category
 {
     /**
      * @var int
@@ -43,26 +43,9 @@ class Article
     private $visual;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="price", type="decimal", precision=10, scale=2)
+     * @ORM\OneToMany(targetEntity="ArticleBundle\Entity\Article", mappedBy="category")
      */
-    private $price;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(name="stock", type="integer")
-     */
-    private $stock;
-
-    /**
-     * @var category
-     *
-     * @ORM\ManyToOne(targetEntity="CategoryBundle\Entity\Category")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $category;
+    private $articles;
 
 
     /**
@@ -80,7 +63,7 @@ class Article
      *
      * @param string $name
      *
-     * @return Article
+     * @return Category
      */
     public function setName($name)
     {
@@ -104,7 +87,7 @@ class Article
      *
      * @param string $description
      *
-     * @return Article
+     * @return Category
      */
     public function setDescription($description)
     {
@@ -128,7 +111,7 @@ class Article
      *
      * @param string $visual
      *
-     * @return Article
+     * @return Category
      */
     public function setVisual($visual)
     {
@@ -146,64 +129,5 @@ class Article
     {
         return $this->visual;
     }
-
-    /**
-     * Set price
-     *
-     * @param string $price
-     *
-     * @return Article
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
-
-        return $this;
-    }
-
-    /**
-     * Get price
-     *
-     * @return string
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * Set stock
-     *
-     * @param integer $stock
-     *
-     * @return Article
-     */
-    public function setStock($stock)
-    {
-        $this->stock = $stock;
-
-        return $this;
-    }
-
-    /**
-     * Get stock
-     *
-     * @return int
-     */
-    public function getStock()
-    {
-        return $this->stock;
-    }
-
-    public function setCategory($category)
-    {
-        $this->category=$category;
-
-        return $this;
-    }
-
-    public function getCategory()
-    {
-        return $this->category;
-    }
 }
+
