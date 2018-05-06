@@ -26,6 +26,32 @@ class ArticleController extends Controller
     }
 
     /**
+     * @Rest\View()
+     * @Rest\Get("/road")
+     */
+    public function getRoadArtcilesAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $articles = $em->getRepository('ArticleBundle:Article')->findByCategory(2);
+
+        return $articles;
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Get("/moutain")
+     */
+    public function getMoutainArticlesAction()
+    {
+        $em = $this->getDoctrine()->getManager();
+
+        $articles = $em->getRepository('ArticleBundle:Article')->findByCategory(1);
+
+        return $articles;
+    }
+
+    /**
      * @Rest\Get("/{id}")
      * @Rest\View()
      */
